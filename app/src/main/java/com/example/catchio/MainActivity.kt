@@ -3,45 +3,69 @@ package com.example.catchio
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.catchio.ui.theme.CatchioTheme
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.catchio.navigation.NavigationDrawerContent
+import com.example.catchio.navigation.Screen
+import com.example.catchio.screens.MainScreen
+import com.example.catchio.screens.Screen1
+import com.example.catchio.screens.Screen2
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            CatchioTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+            val navController = rememberNavController()
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+            val scope = rememberCoroutineScope()
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+
+            ModalNavigationDrawer(
+                drawerState = drawerState,
+                gesturesEnabled = true,
+                drawerContent = {
+                    NavigationDrawerContent(
+                        navController = navController,
+                        drawerState = drawerState,
+                        scope = scope,
+                        currentDestination = currentDestination
                     )
+                }
+            ) {
+                Scaffold(
+                    topBar = {
+                        CenterAlignedTopAppBar(
+                            title = { Text(currentDestination?.route ?: "Main") },
+                            navigationIcon = {
+                                IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                    Icon(androidx.compose.material.icons.Icons.Filled.Menu, contentDescription = "Menu")
+                                }
+                            }
+                        )
+                    },
+                    modifier = Modifier.padding()
+                ) { padding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.Main.route,
+                        Modifier.padding(padding)
+                    ) {
+                        composable(Screen.Main.route) { MainScreen() }
+                        composable(Screen.Screen1.route) { Screen1() }
+                        composable(Screen.Screen2.route) { Screen2() }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CatchioTheme {
-        Greeting("Android")
     }
 }
