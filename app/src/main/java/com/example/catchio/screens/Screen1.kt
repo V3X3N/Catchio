@@ -1,6 +1,7 @@
 package com.example.catchio.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,14 +40,20 @@ fun Screen1(screen1ViewModel: Screen1ViewModel = viewModel()) {
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     for (colIndex in 0..1) {
+                        val isRed = (rowIndex + colIndex) % 2 == 0
                         Box(
                             modifier = Modifier
                                 .weight(1f)
                                 .aspectRatio(1f)
                                 .background(
-                                    color = if ((rowIndex + colIndex) % 2 == 0) Color.Red else Color.Blue,
+                                    color = if (isRed) Color.Red else Color.Transparent,
                                     shape = RoundedCornerShape(8.dp)
                                 )
+                                .clickable(enabled = isRed) {
+                                    if (isRed) {
+                                        println("Clicked square at row $rowIndex, column $colIndex")
+                                    }
+                                }
                         )
                     }
                 }
