@@ -52,7 +52,7 @@ fun Screen1(navController: NavHostController, screen1ViewModel: Screen1ViewModel
                                 )
                                 .clickable(enabled = isRed) {
                                     if (isRed) {
-                                        navController.navigate("cityDetails/$rowIndex/$colIndex")
+                                        navController.navigate("townDetails/$rowIndex/$colIndex")
                                     }
                                 }
                         )

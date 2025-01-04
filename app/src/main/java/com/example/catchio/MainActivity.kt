@@ -16,10 +16,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.catchio.navigation.NavigationDrawerContent
 import com.example.catchio.navigation.Screen
-import com.example.catchio.screens.CityDetailsScreen
 import com.example.catchio.screens.MainScreen
 import com.example.catchio.screens.Screen1
 import com.example.catchio.screens.Screen2
+import com.example.catchio.screens.TownDetailsScreen
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Screen1.route) { Screen1(navController) }
                         composable(Screen.Screen2.route) { Screen2() }
                         composable(
-                            "cityDetails/{row}/{column}",
+                            "townDetails/{row}/{column}",
                             arguments = listOf(
                                 navArgument("row") { type = NavType.IntType },
                                 navArgument("column") { type = NavType.IntType }
@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
                         ) { backStackEntry ->
                             val row = backStackEntry.arguments?.getInt("row") ?: 0
                             val column = backStackEntry.arguments?.getInt("column") ?: 0
-                            CityDetailsScreen(row, column)
+                            TownDetailsScreen(row, column)
                         }
                     }
                 }

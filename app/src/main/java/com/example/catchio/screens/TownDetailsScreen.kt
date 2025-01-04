@@ -1,5 +1,6 @@
 package com.example.catchio.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,13 +22,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlin.random.Random
 
 @Composable
-fun CityDetailsScreen(row: Int, column: Int, cityDetailsViewModel: CityDetailsViewModel = viewModel()) {
-    val cityDetails by cityDetailsViewModel.cityDetails.collectAsState()
-    cityDetailsViewModel.loadCityDetails(row, column)
+fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsViewModel = viewModel()) {
+    val townLists by townDetailsViewModel.townLists.collectAsState()
+    val townDetails by townDetailsViewModel.townDetails.collectAsState()
+    townDetailsViewModel.loadTownDetails(row, column)
 
     val backgroundColor = when (row * 2 + column) {
         0 -> Color.Yellow
@@ -43,21 +47,7 @@ fun CityDetailsScreen(row: Int, column: Int, cityDetailsViewModel: CityDetailsVi
         else -> Color.Transparent
     }
 
-    val randomRange = when (row * 2 + column) {
-        0 -> 1..6
-        3 -> 7..12
-        4 -> 13..18
-        7 -> 19..24
-        8 -> 25..30
-        11 -> 31..36
-        12 -> 37..42
-        15 -> 43..48
-        16 -> 49..54
-        19 -> 55..60
-        else -> 0..0
-    }
-
-    var displayNumber by remember { mutableStateOf<Int?>(null) }
+    var displayImageResId by remember { mutableStateOf<Int?>(null) }
 
     Box(
         modifier = Modifier
@@ -70,12 +60,12 @@ fun CityDetailsScreen(row: Int, column: Int, cityDetailsViewModel: CityDetailsVi
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("City Details", color = Color.White)
+            Text("Town Details", color = if (backgroundColor == Color.Black) Color.White else Color.Black)
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Row: $row", color = Color.White)
-            Text("Column: $column", color = Color.White)
+            Text("Row: $row", color = if (backgroundColor == Color.Black) Color.White else Color.Black)
+            Text("Column: $column", color = if (backgroundColor == Color.Black) Color.White else Color.Black)
             Spacer(modifier = Modifier.height(16.dp))
-            Text(cityDetails, color = Color.White)
+            Text(townDetails, color = if (backgroundColor == Color.Black) Color.White else Color.Black)
             Spacer(modifier = Modifier.height(16.dp))
 
             Box(
@@ -84,19 +74,31 @@ fun CityDetailsScreen(row: Int, column: Int, cityDetailsViewModel: CityDetailsVi
                     .background(Color.Gray, RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = displayNumber?.toString() ?: "No Number",
-                    color = Color.White
-                )
+                if (displayImageResId != null) {
+                    Image(
+                        painter = painterResource(id = displayImageResId!!),
+                        contentDescription = "Town Image",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Text("No Image Selected", color = Color.White)
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            val listIndex = row * 2 + column
+            val currentTownList = townLists.getOrNull(listIndex) ?: emptyList()
+
             Button(onClick = {
-                val randomValue = randomRange.random()
-                displayNumber = randomValue
+                if (currentTownList.isNotEmpty()) {
+                    val randomTown = currentTownList.random(Random(System.currentTimeMillis()))
+                    displayImageResId = when (randomTown) {
+                        is Town.TownImage -> randomTown.imageResId
+                    }
+                }
             }) {
-                Text("Generate Number")
+                Text("Generate Image")
             }
 
             Spacer(modifier = Modifier.height(8.dp))
