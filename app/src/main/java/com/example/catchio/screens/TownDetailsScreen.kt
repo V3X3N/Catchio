@@ -16,18 +16,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlin.random.Random
 
 @Composable
 fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsViewModel = viewModel()) {
     val townDetails by townDetailsViewModel.townDetails.collectAsState()
     val townLists by townDetailsViewModel.townLists.collectAsState()
+
+    var selectedTown by remember { mutableStateOf<Town.TownData?>(null) }
 
     val backgroundColor = when (row * 2 + column) {
         0 -> Color.Yellow
@@ -43,8 +47,6 @@ fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsVi
         else -> Color.Transparent
     }
     val textColor = if (backgroundColor == Color.Black) Color.White else Color.Black
-
-    townDetailsViewModel.loadTownDetails(row, column)
 
     Box(
         modifier = Modifier
@@ -65,21 +67,10 @@ fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsVi
             Text(townDetails, color = textColor)
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (townDetails.contains("Image:")) {
-                val imageResId = townDetails.substringAfter("Image:").trim().toIntOrNull()
-                if (imageResId != null) {
-                    DisplayImage(imageResId = imageResId)
-                }
-            } else if (townDetails.contains("Dragon:")) {
-                val dragonName = townDetails.substringAfter("Dragon:").substringBefore("(").trim()
-                val listIndex = row * 2 + column
-                val currentTownList = townLists.getOrNull(listIndex) ?: emptyList()
-                val currentTownData = currentTownList.find { (it as? Town.TownData)?.dragon?.name == dragonName } as? Town.TownData
-                val dragonImageResId = currentTownData?.dragon?.imageResId
-
-                if (dragonImageResId != null) {
-                    DisplayImage(imageResId = dragonImageResId)
-                }
+            if (selectedTown?.dragon != null) {
+                DisplayImage(imageResId = selectedTown!!.dragon!!.imageResId)
+            } else if (selectedTown?.imageResId != null) {
+                DisplayImage(imageResId = selectedTown!!.imageResId!!)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -89,9 +80,8 @@ fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsVi
 
             Button(onClick = {
                 if (currentTownList.isNotEmpty()) {
-                    currentTownList.random(Random(System.currentTimeMillis()))
-                    townDetailsViewModel.loadTownDetails(row, column)
-                    println("Random Choice")
+                    selectedTown = currentTownList.random() as? Town.TownData
+                    townDetailsViewModel.updateTownDetails(selectedTown, row, column)
                 }
             }) {
                 Text("Random choice")

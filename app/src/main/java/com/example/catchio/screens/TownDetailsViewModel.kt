@@ -78,31 +78,26 @@ class TownDetailsViewModel : ViewModel() {
         )
     }
 
-    fun loadTownDetails(row: Int, column: Int) {
-        val listIndex = row * 2 + column
-        val currentTownList = _townLists.value.getOrNull(listIndex) ?: emptyList()
-
-        if (currentTownList.isNotEmpty()) {
-            val randomTown = currentTownList.random()
-            _townDetails.value = when (randomTown) {
-                is Town.TownData -> {
-                    if (randomTown.dragon != null) {
-                        "Town at row $row, column $column\n" +
-                                "Dragon: ${randomTown.dragon.name} (Lv. ${randomTown.dragon.level})\n" +
-                                "Type: ${randomTown.dragon.type}\n" +
-                                "HP: ${randomTown.dragon.hp}\n" +
-                                "Attack: ${randomTown.dragon.attack}\n" +
-                                "Defense: ${randomTown.dragon.defense}\n" +
-                                "Speed: ${randomTown.dragon.speed}\n" +
-                                "Attacks: ${randomTown.dragon.attacks}"
-                    } else if (randomTown.imageResId != null) {
-                        "Town at row $row, column $column\n" +
-                                "Image: ${randomTown.imageResId}"
-                    } else {
-                        "Empty Town"
-                    }
+    fun updateTownDetails(town: Town.TownData?, row: Int, column: Int) {
+        _townDetails.value = when (town) {
+            is Town.TownData -> {
+                if (town.dragon != null) {
+                    "Town at row $row, column $column\n" +
+                            "Dragon: ${town.dragon.name} (Lv. ${town.dragon.level})\n" +
+                            "Type: ${town.dragon.type}\n" +
+                            "HP: ${town.dragon.hp}\n" +
+                            "Attack: ${town.dragon.attack}\n" +
+                            "Defense: ${town.dragon.defense}\n" +
+                            "Speed: ${town.dragon.speed}\n" +
+                            "Attacks: ${town.dragon.attacks}"
+                } else if (town.imageResId != null) {
+                    "Town at row $row, column $column\n" +
+                            "Image: ${town.imageResId}"
+                } else {
+                    "Empty Town"
                 }
             }
+            else -> "Empty Town"
         }
     }
 }
