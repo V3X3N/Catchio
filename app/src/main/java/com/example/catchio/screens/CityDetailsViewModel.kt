@@ -9,6 +9,6 @@ class CityDetailsViewModel : ViewModel() {
     val cityDetails: StateFlow<String> = _cityDetails
 
     fun loadCityDetails(row: Int, column: Int) {
-        _cityDetails.value = "City at row $row, column $column is a great place!"
+        _cityDetails.value = "City at row $row, column $column is a unique and vibrant location!"
     }
 }
