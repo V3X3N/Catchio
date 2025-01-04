@@ -8,11 +8,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,16 +30,16 @@ fun CityDetailsScreen(row: Int, column: Int, cityDetailsViewModel: CityDetailsVi
     cityDetailsViewModel.loadCityDetails(row, column)
 
     val backgroundColor = when (row * 2 + column) {
-        0 -> Color.Red
-        3 -> Color.Yellow
-        4 -> Color.Blue
-        7 -> Color.Cyan
-        8 -> Color.Green
-        11 -> Color.Black
-        12 -> Color.DarkGray
-        15 -> Color.Gray
-        16 -> Color.LightGray
-        19 -> Color.Magenta
+        0 -> Color.Yellow
+        3 -> Color.Blue
+        4 -> Color.Red
+        7 -> Color.Green
+        8 -> Color.Cyan
+        11 -> Color.Magenta
+        12 -> Color.Gray
+        15 -> Color.LightGray
+        16 -> Color.White
+        19 -> Color.Black
         else -> Color.Transparent
     }
 
@@ -51,6 +56,8 @@ fun CityDetailsScreen(row: Int, column: Int, cityDetailsViewModel: CityDetailsVi
         19 -> 55..60
         else -> 0..0
     }
+
+    var displayNumber by remember { mutableStateOf<Int?>(null) }
 
     Box(
         modifier = Modifier
@@ -70,11 +77,34 @@ fun CityDetailsScreen(row: Int, column: Int, cityDetailsViewModel: CityDetailsVi
             Spacer(modifier = Modifier.height(16.dp))
             Text(cityDetails, color = Color.White)
             Spacer(modifier = Modifier.height(16.dp))
+
+            Box(
+                modifier = Modifier
+                    .size(200.dp)
+                    .background(Color.Gray, RoundedCornerShape(16.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = displayNumber?.toString() ?: "No Number",
+                    color = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Button(onClick = {
                 val randomValue = randomRange.random()
-                println("Button clicked! Random value: $randomValue")
+                displayNumber = randomValue
             }) {
-                Text("Click Me")
+                Text("Generate Number")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(onClick = {
+                println("Catch!!")
+            }) {
+                Text("Catch!!")
             }
         }
     }
