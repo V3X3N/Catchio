@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,17 +25,31 @@ fun CityDetailsScreen(row: Int, column: Int, cityDetailsViewModel: CityDetailsVi
     cityDetailsViewModel.loadCityDetails(row, column)
 
     val backgroundColor = when (row * 2 + column) {
-        0 -> Color.Yellow
-        1 -> Color.Blue
-        2 -> Color.Red
-        3 -> Color.Green
-        4 -> Color.Cyan
-        5 -> Color.Magenta
-        6 -> Color.Gray
-        7 -> Color.LightGray
-        8 -> Color.White
-        9 -> Color.Black
+        0 -> Color.Red
+        3 -> Color.Yellow
+        4 -> Color.Blue
+        7 -> Color.Cyan
+        8 -> Color.Green
+        11 -> Color.Black
+        12 -> Color.DarkGray
+        15 -> Color.Gray
+        16 -> Color.LightGray
+        19 -> Color.Magenta
         else -> Color.Transparent
+    }
+
+    val randomRange = when (row * 2 + column) {
+        0 -> 1..6
+        3 -> 7..12
+        4 -> 13..18
+        7 -> 19..24
+        8 -> 25..30
+        11 -> 31..36
+        12 -> 37..42
+        15 -> 43..48
+        16 -> 49..54
+        19 -> 55..60
+        else -> 0..0
     }
 
     Box(
@@ -54,6 +69,13 @@ fun CityDetailsScreen(row: Int, column: Int, cityDetailsViewModel: CityDetailsVi
             Text("Column: $column", color = Color.White)
             Spacer(modifier = Modifier.height(16.dp))
             Text(cityDetails, color = Color.White)
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                val randomValue = randomRange.random()
+                println("Button clicked! Random value: $randomValue")
+            }) {
+                Text("Click Me")
+            }
         }
     }
 }
