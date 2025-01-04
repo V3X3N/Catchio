@@ -16,9 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,9 +26,8 @@ import kotlin.random.Random
 
 @Composable
 fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsViewModel = viewModel()) {
-    val townLists by townDetailsViewModel.townLists.collectAsState()
     val townDetails by townDetailsViewModel.townDetails.collectAsState()
-    townDetailsViewModel.loadTownDetails(row, column)
+    val townLists by townDetailsViewModel.townLists.collectAsState()
 
     val backgroundColor = when (row * 2 + column) {
         0 -> Color.Yellow
@@ -46,8 +42,9 @@ fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsVi
         19 -> Color.Black
         else -> Color.Transparent
     }
+    val textColor = if (backgroundColor == Color.Black) Color.White else Color.Black
 
-    var displayImageResId by remember { mutableStateOf<Int?>(null) }
+    townDetailsViewModel.loadTownDetails(row, column)
 
     Box(
         modifier = Modifier
@@ -60,28 +57,28 @@ fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsVi
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Town Details", color = if (backgroundColor == Color.Black) Color.White else Color.Black)
+            Text("Town Details", color = textColor)
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Row: $row", color = if (backgroundColor == Color.Black) Color.White else Color.Black)
-            Text("Column: $column", color = if (backgroundColor == Color.Black) Color.White else Color.Black)
+            Text("Row: $row", color = textColor)
+            Text("Column: $column", color = textColor)
             Spacer(modifier = Modifier.height(16.dp))
-            Text(townDetails, color = if (backgroundColor == Color.Black) Color.White else Color.Black)
+            Text(townDetails, color = textColor)
             Spacer(modifier = Modifier.height(16.dp))
 
-            Box(
-                modifier = Modifier
-                    .size(200.dp)
-                    .background(Color.Gray, RoundedCornerShape(16.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                if (displayImageResId != null) {
-                    Image(
-                        painter = painterResource(id = displayImageResId!!),
-                        contentDescription = "Town Image",
-                        modifier = Modifier.fillMaxSize()
-                    )
-                } else {
-                    Text("No Image Selected", color = Color.White)
+            if (townDetails.contains("Image:")) {
+                val imageResId = townDetails.substringAfter("Image:").trim().toIntOrNull()
+                if (imageResId != null) {
+                    DisplayImage(imageResId = imageResId)
+                }
+            } else if (townDetails.contains("Dragon:")) {
+                val dragonName = townDetails.substringAfter("Dragon:").substringBefore("(").trim()
+                val listIndex = row * 2 + column
+                val currentTownList = townLists.getOrNull(listIndex) ?: emptyList()
+                val currentTownData = currentTownList.find { (it as? Town.TownData)?.dragon?.name == dragonName } as? Town.TownData
+                val dragonImageResId = currentTownData?.dragon?.imageResId
+
+                if (dragonImageResId != null) {
+                    DisplayImage(imageResId = dragonImageResId)
                 }
             }
 
@@ -92,13 +89,12 @@ fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsVi
 
             Button(onClick = {
                 if (currentTownList.isNotEmpty()) {
-                    val randomTown = currentTownList.random(Random(System.currentTimeMillis()))
-                    displayImageResId = when (randomTown) {
-                        is Town.TownImage -> randomTown.imageResId
-                    }
+                    currentTownList.random(Random(System.currentTimeMillis()))
+                    townDetailsViewModel.loadTownDetails(row, column)
+                    println("Random Choice")
                 }
             }) {
-                Text("Generate Image")
+                Text("Random choice")
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -109,5 +105,21 @@ fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsVi
                 Text("Catch!!")
             }
         }
+    }
+}
+
+@Composable
+fun DisplayImage(imageResId: Int) {
+    Box(
+        modifier = Modifier
+            .size(200.dp)
+            .background(Color.LightGray, RoundedCornerShape(16.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = "Town Image",
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
