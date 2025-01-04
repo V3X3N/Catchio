@@ -8,12 +8,15 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.catchio.navigation.NavigationDrawerContent
 import com.example.catchio.navigation.Screen
+import com.example.catchio.screens.CityDetailsScreen
 import com.example.catchio.screens.MainScreen
 import com.example.catchio.screens.Screen1
 import com.example.catchio.screens.Screen2
@@ -61,8 +64,19 @@ class MainActivity : ComponentActivity() {
                         Modifier.padding(padding)
                     ) {
                         composable(Screen.Main.route) { MainScreen() }
-                        composable(Screen.Screen1.route) { Screen1() }
+                        composable(Screen.Screen1.route) { Screen1(navController) }
                         composable(Screen.Screen2.route) { Screen2() }
+                        composable(
+                            "cityDetails/{row}/{column}",
+                            arguments = listOf(
+                                navArgument("row") { type = NavType.IntType },
+                                navArgument("column") { type = NavType.IntType }
+                            )
+                        ) { backStackEntry ->
+                            val row = backStackEntry.arguments?.getInt("row") ?: 0
+                            val column = backStackEntry.arguments?.getInt("column") ?: 0
+                            CityDetailsScreen(row, column)
+                        }
                     }
                 }
             }

@@ -19,9 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 
 @Composable
-fun Screen1(screen1ViewModel: Screen1ViewModel = viewModel()) {
+fun Screen1(navController: NavHostController, screen1ViewModel: Screen1ViewModel = viewModel()) {
     val rowsCount by screen1ViewModel.rowsCount.collectAsState()
     Box(
         modifier = Modifier
@@ -51,7 +52,7 @@ fun Screen1(screen1ViewModel: Screen1ViewModel = viewModel()) {
                                 )
                                 .clickable(enabled = isRed) {
                                     if (isRed) {
-                                        println("Clicked square at row $rowIndex, column $colIndex")
+                                        navController.navigate("cityDetails/$rowIndex/$colIndex")
                                     }
                                 }
                         )
