@@ -22,63 +22,63 @@ class TownDetailsViewModel(application: Application) : AndroidViewModel(applicat
     init {
         _townLists.value = listOf(
             listOf(
-                Town.TownData(dragon = Dragon.createItu()),
-                Town.TownData(dragon = Dragon.createFerxe()),
+                Town.TownData(dragon = Dragon.createItu(5,7)),
+                Town.TownData(dragon = Dragon.createFerxe(5,7)),
                 Town.TownData(imageResId = R.drawable.none)
             ),
             emptyList(),
             emptyList(),
             listOf(
-                Town.TownData(dragon = Dragon.createSoeshi()),
-                Town.TownData(dragon = Dragon.createTapree()),
+                Town.TownData(dragon = Dragon.createTapree(5,7)),
+                Town.TownData(dragon = Dragon.createSoeshi(5,7)),
                 Town.TownData(imageResId = R.drawable.none)
             ),
             listOf(
-                Town.TownData(dragon = Dragon.createItu()),
-                Town.TownData(dragon = Dragon.createSoeshi()),
-                Town.TownData(imageResId = R.drawable.none)
-            ),
-            emptyList(),
-            emptyList(),
-            listOf(
-                Town.TownData(dragon = Dragon.createSoeshi()),
-                Town.TownData(dragon = Dragon.createFerxe()),
-                Town.TownData(imageResId = R.drawable.none)
-            ),
-            listOf(
-                Town.TownData(dragon = Dragon.createTapree()),
-                Town.TownData(dragon = Dragon.createMiurfinn()),
+                Town.TownData(dragon = Dragon.createItu(5,7)),
+                Town.TownData(dragon = Dragon.createSoeshi(5,7)),
                 Town.TownData(imageResId = R.drawable.none)
             ),
             emptyList(),
             emptyList(),
             listOf(
-                Town.TownData(dragon = Dragon.createFerxe()),
-                Town.TownData(dragon = Dragon.createTapree()),
+                Town.TownData(dragon = Dragon.createSoeshi(5,7)),
+                Town.TownData(dragon = Dragon.createFerxe(5,7)),
                 Town.TownData(imageResId = R.drawable.none)
             ),
             listOf(
-                Town.TownData(dragon = Dragon.createTapree()),
-                Town.TownData(dragon = Dragon.createItu()),
-                Town.TownData(imageResId = R.drawable.none)
-            ),
-            emptyList(),
-            emptyList(),
-            listOf(
-                Town.TownData(dragon = Dragon.createSoeshi()),
-                Town.TownData(dragon = Dragon.createTapree()),
-                Town.TownData(imageResId = R.drawable.none)
-            ),
-            listOf(
-                Town.TownData(dragon = Dragon.createItu()),
-                Town.TownData(dragon = Dragon.createFerxe()),
+                Town.TownData(dragon = Dragon.createTapree(5,7)),
+                Town.TownData(dragon = Dragon.createMiurfinn(5,7)),
                 Town.TownData(imageResId = R.drawable.none)
             ),
             emptyList(),
             emptyList(),
             listOf(
-                Town.TownData(dragon = Dragon.createTapree()),
-                Town.TownData(dragon = Dragon.createItu()),
+                Town.TownData(dragon = Dragon.createFerxe(5,7)),
+                Town.TownData(dragon = Dragon.createTapree(5,7)),
+                Town.TownData(imageResId = R.drawable.none)
+            ),
+            listOf(
+                Town.TownData(dragon = Dragon.createTapree(5,7)),
+                Town.TownData(dragon = Dragon.createItu(5,7)),
+                Town.TownData(imageResId = R.drawable.none)
+            ),
+            emptyList(),
+            emptyList(),
+            listOf(
+                Town.TownData(dragon = Dragon.createSoeshi(5,7)),
+                Town.TownData(dragon = Dragon.createTapree(5,7)),
+                Town.TownData(imageResId = R.drawable.none)
+            ),
+            listOf(
+                Town.TownData(dragon = Dragon.createItu(5,7)),
+                Town.TownData(dragon = Dragon.createFerxe(5,7)),
+                Town.TownData(imageResId = R.drawable.none)
+            ),
+            emptyList(),
+            emptyList(),
+            listOf(
+                Town.TownData(dragon = Dragon.createTapree(5,7)),
+                Town.TownData(dragon = Dragon.createItu(5,7)),
                 Town.TownData(imageResId = R.drawable.none)
             )
         )
