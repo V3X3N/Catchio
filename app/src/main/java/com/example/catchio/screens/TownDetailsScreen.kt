@@ -30,7 +30,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsViewModel = viewModel()) {
     val townDetails by townDetailsViewModel.townDetails.collectAsState()
     val townLists by townDetailsViewModel.townLists.collectAsState()
-
     var selectedTown by remember { mutableStateOf<Town.TownData?>(null) }
 
     val backgroundColor = when (row * 2 + column) {
@@ -90,12 +89,11 @@ fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsVi
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(onClick = {
-                selectedTown?.dragon?.let {
-                    townDetailsViewModel.catchDragon(it)
-                }
+                townDetailsViewModel.catchDragon()
             }) {
                 Text("Catch!!")
             }
+
         }
     }
 }

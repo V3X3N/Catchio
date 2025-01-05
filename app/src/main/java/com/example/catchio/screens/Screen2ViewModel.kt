@@ -17,7 +17,7 @@ class Screen2ViewModel(application: Application) : AndroidViewModel(application)
         reloadDragons()
     }
 
-    fun loadDragons() {
+    private fun loadDragons() {
         val dragons = sharedPreferencesHelper.loadDragons()
         _caughtDragons.value = dragons
     }
