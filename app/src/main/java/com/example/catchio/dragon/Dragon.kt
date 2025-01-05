@@ -36,6 +36,5 @@ data class Dragon(
         fun createTapree(): Dragon = Dragon(
             "Tapree", "Grass", 7..18, 12..28, listOf("Thunderbolt", "Thunder", "Electric Storm", "Shock Wave"), R.drawable.tapree
         )
-
     }
 }

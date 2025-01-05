@@ -1,17 +1,24 @@
 package com.example.catchio.screens
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import com.example.catchio.R
+import com.example.catchio.SharedPreferencesHelper
 import com.example.catchio.dragon.Dragon
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class TownDetailsViewModel : ViewModel() {
+class TownDetailsViewModel(application: Application) : AndroidViewModel(application) {
+    private val sharedPreferencesHelper = SharedPreferencesHelper(application)
+
     private val _townLists = MutableStateFlow<List<List<Town>>>(List(20) { emptyList() })
     val townLists: StateFlow<List<List<Town>>> = _townLists
 
     private val _townDetails = MutableStateFlow("")
     val townDetails: StateFlow<String> = _townDetails
+
+    private val _caughtDragons = MutableStateFlow(sharedPreferencesHelper.loadDragons())
+    val caughtDragons: StateFlow<List<Dragon>> = _caughtDragons
 
     init {
         _townLists.value = listOf(
@@ -30,7 +37,7 @@ class TownDetailsViewModel : ViewModel() {
             listOf(
                 Town.TownData(dragon = Dragon.createItu()),
                 Town.TownData(dragon = Dragon.createSoeshi()),
-                Town.TownData(imageResId = R.drawable.none),
+                Town.TownData(imageResId = R.drawable.none)
             ),
             emptyList(),
             emptyList(),
@@ -91,13 +98,20 @@ class TownDetailsViewModel : ViewModel() {
                             "Speed: ${town.dragon.speed}\n" +
                             "Attacks: ${town.dragon.attacks}"
                 } else if (town.imageResId != null) {
-                    "Town at row $row, column $column\n" +
-                            "Image: ${town.imageResId}"
+                    "Town at row $row, column $column\nImage: ${town.imageResId}"
                 } else {
                     "Empty Town"
                 }
             }
             else -> "Empty Town"
+        }
+    }
+
+    fun catchDragon(dragon: Dragon?) {
+        dragon?.let {
+            val updatedDragons = _caughtDragons.value + it
+            _caughtDragons.value = updatedDragons
+            sharedPreferencesHelper.saveDragons(updatedDragons)
         }
     }
 }

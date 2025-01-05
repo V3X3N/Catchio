@@ -90,7 +90,9 @@ fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsVi
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(onClick = {
-                println("Catch!!")
+                selectedTown?.dragon?.let {
+                    townDetailsViewModel.catchDragon(it)
+                }
             }) {
                 Text("Catch!!")
             }
