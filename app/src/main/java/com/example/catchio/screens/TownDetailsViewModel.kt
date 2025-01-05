@@ -18,7 +18,6 @@ class TownDetailsViewModel(application: Application) : AndroidViewModel(applicat
     val townDetails: StateFlow<String> = _townDetails
 
     private val _caughtDragons = MutableStateFlow(sharedPreferencesHelper.loadDragons())
-    val caughtDragons: StateFlow<List<Dragon>> = _caughtDragons
 
     init {
         _townLists.value = listOf(

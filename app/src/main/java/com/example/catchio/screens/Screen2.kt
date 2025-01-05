@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,6 +24,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun Screen2(screen2ViewModel: Screen2ViewModel = viewModel()) {
     val caughtDragons by screen2ViewModel.caughtDragons.collectAsState()
+
+    LaunchedEffect(caughtDragons) {
+        screen2ViewModel.loadDragons()
+    }
+
     val totalSlots = 40
 
     val dragonSlots = (caughtDragons + List(totalSlots - caughtDragons.size) { null })
