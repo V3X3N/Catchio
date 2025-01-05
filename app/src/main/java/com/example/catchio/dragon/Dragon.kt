@@ -10,11 +10,20 @@ data class Dragon(
     val attacks: List<String>,
     val imageResId: Int
 ) {
-    val level: Int = levelRange.random()
-    val hp: Int = statRange.random()
-    val attack: Int = statRange.random()
-    val defense: Int = statRange.random()
-    val speed: Int = statRange.random()
+    val level: Int
+        get() = levelRange.random()
+
+    val hp: Int
+        get() = statRange.random()
+
+    val attack: Int
+        get() = statRange.random()
+
+    val defense: Int
+        get() = statRange.random()
+
+    val speed: Int
+        get() = statRange.random()
 
     companion object {
         fun createFerxe(): Dragon = Dragon(
@@ -38,3 +47,4 @@ data class Dragon(
         )
     }
 }
+
