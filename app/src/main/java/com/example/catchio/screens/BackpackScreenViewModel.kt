@@ -7,7 +7,7 @@ import com.example.catchio.dragon.Dragon
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class Screen2ViewModel(application: Application) : AndroidViewModel(application) {
+class BackpackScreenViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPreferencesHelper = SharedPreferencesHelper(application)
     private val _caughtDragons = MutableStateFlow<List<Dragon>>(emptyList())
     val caughtDragons: StateFlow<List<Dragon>> = _caughtDragons

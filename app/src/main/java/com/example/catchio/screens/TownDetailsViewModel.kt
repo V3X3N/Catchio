@@ -11,94 +11,100 @@ import kotlinx.coroutines.flow.StateFlow
 class TownDetailsViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPreferencesHelper = SharedPreferencesHelper(application)
 
-    private val _townLists = MutableStateFlow<List<List<Town>>>(List(20) { emptyList() })
-    val townLists: StateFlow<List<List<Town>>> = _townLists
+    private val _townLists = MutableStateFlow<List<List<Town.TownData>>>(List(20) { emptyList() })
+    val townLists: StateFlow<List<List<Town.TownData>>> = _townLists
 
     private val _townDetails = MutableStateFlow("")
     val townDetails: StateFlow<String> = _townDetails
 
     private val _caughtDragons = MutableStateFlow(sharedPreferencesHelper.loadDragons())
 
+    private val _generatedDragon = MutableStateFlow<Dragon?>(null)
+
     init {
         _townLists.value = listOf(
             listOf(
-                Town.TownData(dragon = Dragon.create("Ferxe",1,5)),
+                Town.TownData(dragonName = "Ferxe", levelRange = 1..5),
             ),
-            emptyList(), emptyList(),
+            emptyList(),
+            emptyList(),
             listOf(
-                Town.TownData(dragon = Dragon.create("Ferxe",1,5)),
-                Town.TownData(dragon = Dragon.create("Itu",1,5)),
+                Town.TownData(dragonName = "Ferxe", levelRange = 5..10),
+                Town.TownData(dragonName = "Itu", levelRange = 5..10),
                 Town.TownData(imageResId = R.drawable.none)
             ),
             listOf(
-                Town.TownData(dragon = Dragon.create("Ferxe",1,5)),
-                Town.TownData(dragon = Dragon.create("Itu",1,5)),
+                Town.TownData(dragonName = "Ferxe", levelRange = 1..5),
+                Town.TownData(dragonName = "Itu", levelRange = 1..5),
                 Town.TownData(imageResId = R.drawable.none)
             ),
-            emptyList(), emptyList(),
+            emptyList(),
+            emptyList(),
             listOf(
-                Town.TownData(dragon = Dragon.create("Ferxe",1,5)),
-                Town.TownData(dragon = Dragon.create("Itu",1,5)),
-                Town.TownData(imageResId = R.drawable.none)
-            ),
-            listOf(
-                Town.TownData(dragon = Dragon.create("Ferxe",1,5)),
-                Town.TownData(dragon = Dragon.create("Itu",1,5)),
-                Town.TownData(imageResId = R.drawable.none)
-            ),
-            emptyList(), emptyList(),
-            listOf(
-                Town.TownData(dragon = Dragon.create("Ferxe",1,5)),
-                Town.TownData(dragon = Dragon.create("Itu",1,5)),
+                Town.TownData(dragonName = "Ferxe", levelRange = 1..5),
+                Town.TownData(dragonName = "Itu", levelRange = 1..5),
                 Town.TownData(imageResId = R.drawable.none)
             ),
             listOf(
-                Town.TownData(dragon = Dragon.create("Ferxe",1,5)),
-                Town.TownData(dragon = Dragon.create("Itu",1,5)),
+                Town.TownData(dragonName = "Ferxe", levelRange = 1..5),
+                Town.TownData(dragonName = "Itu", levelRange = 1..5),
                 Town.TownData(imageResId = R.drawable.none)
             ),
-            emptyList(), emptyList(),
+            emptyList(),
+            emptyList(),
             listOf(
-                Town.TownData(dragon = Dragon.create("Ferxe",1,5)),
-                Town.TownData(dragon = Dragon.create("Itu",1,5)),
+                Town.TownData(dragonName = "Ferxe", levelRange = 1..5),
+                Town.TownData(dragonName = "Itu", levelRange = 1..5),
                 Town.TownData(imageResId = R.drawable.none)
             ),
             listOf(
-                Town.TownData(dragon = Dragon.create("Ferxe",1,5)),
-                Town.TownData(dragon = Dragon.create("Itu",1,5)),
+                Town.TownData(dragonName = "Ferxe", levelRange = 1..5),
+                Town.TownData(dragonName = "Itu", levelRange = 1..5),
                 Town.TownData(imageResId = R.drawable.none)
             ),
-            emptyList(), emptyList(),
+            emptyList(),
+            emptyList(),
             listOf(
-                Town.TownData(dragon = Dragon.create("Tapree",1,5)),
-                Town.TownData(dragon = Dragon.create("Miurfinn",1,5)),
+                Town.TownData(dragonName = "Ferxe", levelRange = 1..5),
+                Town.TownData(dragonName = "Itu", levelRange = 1..5),
                 Town.TownData(imageResId = R.drawable.none)
             ),
+            listOf(
+                Town.TownData(dragonName = "Ferxe", levelRange = 1..5),
+                Town.TownData(dragonName = "Itu", levelRange = 1..5),
+                Town.TownData(imageResId = R.drawable.none)
+            ),
+            emptyList(),
+            emptyList(),
+            listOf(
+                Town.TownData(dragonName = "Tapree", levelRange = 1..5),
+                Town.TownData(dragonName = "Miurfinn", levelRange = 1..5),
+                Town.TownData(imageResId = R.drawable.none)
+            )
         )
     }
-
-    private val _generatedDragon = MutableStateFlow<Dragon?>(null)
 
     fun updateTownDetails(town: Town.TownData?, row: Int, column: Int) {
         _townDetails.value = when (town) {
             is Town.TownData -> {
-                if (town.dragon != null) {
-                    // Wykorzystanie poziomów zapisanych w Town.TownData
-                    val generatedDragon = Dragon.create(town.dragon.name, town.dragon.level, town.dragon.level)
-                    _generatedDragon.value = generatedDragon
-
+                val dragon = town.dragonName?.let {
+                    val range = town.levelRange ?: 1..1
+                    Dragon.create(it, range.first, range.last)
+                }
+                if (dragon != null) {
+                    _generatedDragon.value = dragon
                     "Town at row $row, column $column\n" +
-                            "Dragon: ${generatedDragon.name} (Lv. ${generatedDragon.level})\n" +
-                            "Type: ${generatedDragon.type}\n" +
-                            "HP: ${generatedDragon.hp}\n" +
-                            "Attack: ${generatedDragon.attack}\n" +
-                            "Defense: ${generatedDragon.defense}\n" +
-                            "Speed: ${generatedDragon.speed}\n" +
-                            "Hidden Stats: HP Bonus: ${generatedDragon.hiddenStats.hpBonus}, " +
-                            "Attack Bonus: ${generatedDragon.hiddenStats.attackBonus}, " +
-                            "Defense Bonus: ${generatedDragon.hiddenStats.defenseBonus}, " +
-                            "Speed Bonus: ${generatedDragon.hiddenStats.speedBonus}\n" +
-                            "Attacks: ${generatedDragon.attacks}"
+                            "Dragon: ${dragon.name} (Lv. ${dragon.level})\n" +
+                            "Type: ${dragon.type}\n" +
+                            "HP: ${dragon.hp}\n" +
+                            "Attack: ${dragon.attack}\n" +
+                            "Defense: ${dragon.defense}\n" +
+                            "Speed: ${dragon.speed}\n" +
+                            "Hidden Stats: HP Bonus: ${dragon.hiddenStats.hiddenHP}, " +
+                            "Attack Bonus: ${dragon.hiddenStats.hiddenATK}, " +
+                            "Defense Bonus: ${dragon.hiddenStats.hiddenDEF}, " +
+                            "Speed Bonus: ${dragon.hiddenStats.hiddenSPD}\n" +
+                            "Attacks: ${dragon.attacks}"
                 } else if (town.imageResId != null) {
                     "Town at row $row, column $column\nImage: ${town.imageResId}"
                 } else {

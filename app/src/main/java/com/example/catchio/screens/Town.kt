@@ -1,7 +1,11 @@
 package com.example.catchio.screens
 
-import com.example.catchio.dragon.Dragon
-
-sealed class Town {
-    data class TownData(val dragon: Dragon? = null, val imageResId: Int? = null) : Town()
+data class Town(
+    val townData: TownData
+) {
+    data class TownData(
+        val dragonName: String? = null,
+        val levelRange: IntRange? = null,
+        val imageResId: Int? = null
+    )
 }

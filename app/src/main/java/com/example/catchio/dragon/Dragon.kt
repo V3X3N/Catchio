@@ -16,10 +16,10 @@ data class Dragon(
     val hiddenStats: HiddenStats
 ) {
     data class HiddenStats(
-        val hpBonus: Int,
-        val attackBonus: Int,
-        val defenseBonus: Int,
-        val speedBonus: Int
+        val hiddenHP: Int,
+        val hiddenATK: Int,
+        val hiddenDEF: Int,
+        val hiddenSPD: Int
     )
 
     companion object {
@@ -34,31 +34,28 @@ data class Dragon(
         fun create(name: String, levelMin: Int, levelMax: Int): Dragon {
             val stats = dragonData[name] ?: throw IllegalArgumentException("Unknown dragon name: $name")
 
-            // Generate level within the specified range
             val level = Random.nextInt(levelMin, levelMax + 1)
 
-            // Generate hidden stats
             val hiddenStats = HiddenStats(
-                hpBonus = Random.nextInt(1, 26),
-                attackBonus = Random.nextInt(1, 26),
-                defenseBonus = Random.nextInt(1, 26),
-                speedBonus = Random.nextInt(1, 26)
+                hiddenHP = Random.nextInt(1, 26),
+                hiddenATK = Random.nextInt(1, 26),
+                hiddenDEF = Random.nextInt(1, 26),
+                hiddenSPD = Random.nextInt(1, 26)
             )
 
-            // Calculate final stats
-            val finalHp = stats.baseHp + hiddenStats.hpBonus
-            val finalAttack = stats.baseAttack + hiddenStats.attackBonus
-            val finalDefense = stats.baseDefense + hiddenStats.defenseBonus
-            val finalSpeed = stats.baseSpeed + hiddenStats.speedBonus
+            val finalHP = (0.1f * (1.8f * stats.baseHP + (0.33f * hiddenStats.hiddenHP)) * level).toInt()
+            val finalATK = (0.1f * (1.8f * stats.baseATK + (0.33f * hiddenStats.hiddenATK)) * level).toInt()
+            val finalDEF = (0.1f * (1.8f * stats.baseDEF + (0.33f * hiddenStats.hiddenDEF)) * level).toInt()
+            val finalSPD = (0.1f * (1.8f * stats.baseSPD + (0.33f * hiddenStats.hiddenSPD)) * level).toInt()
 
             return Dragon(
                 name = name,
                 level = level,
                 type = stats.type,
-                hp = finalHp,
-                attack = finalAttack,
-                defense = finalDefense,
-                speed = finalSpeed,
+                hp = finalHP,
+                attack = finalATK,
+                defense = finalDEF,
+                speed = finalSPD,
                 attacks = stats.attackName,
                 imageResId = stats.imageResId,
                 hiddenStats = hiddenStats
@@ -69,10 +66,10 @@ data class Dragon(
             val type: String,
             val attackName: String,
             val imageResId: Int,
-            val baseHp: Int,
-            val baseAttack: Int,
-            val baseDefense: Int,
-            val baseSpeed: Int
+            val baseHP: Int,
+            val baseATK: Int,
+            val baseDEF: Int,
+            val baseSPD: Int
         )
     }
 }

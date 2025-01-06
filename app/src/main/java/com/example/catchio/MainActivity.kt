@@ -18,7 +18,7 @@ import com.example.catchio.navigation.NavigationDrawerContent
 import com.example.catchio.navigation.Screen
 import com.example.catchio.screens.MainScreen
 import com.example.catchio.screens.Screen1
-import com.example.catchio.screens.Screen2
+import com.example.catchio.screens.BackpackScreen
 import com.example.catchio.screens.TownDetailsScreen
 import kotlinx.coroutines.launch
 
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(Screen.Main.route) { MainScreen() }
                         composable(Screen.Screen1.route) { Screen1(navController) }
-                        composable(Screen.Screen2.route) { Screen2() }
+                        composable(Screen.Screen2.route) { BackpackScreen() }
                         composable(
                             "townDetails/{row}/{column}",
                             arguments = listOf(

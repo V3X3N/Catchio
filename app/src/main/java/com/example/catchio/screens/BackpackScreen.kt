@@ -27,8 +27,8 @@ import com.example.catchio.dragon.Dragon
 import com.example.catchio.dragon.DragonDetailsDialog
 
 @Composable
-fun Screen2(screen2ViewModel: Screen2ViewModel = viewModel()) {
-    val caughtDragons by screen2ViewModel.caughtDragons.collectAsState()
+fun BackpackScreen(backpackScreenViewModel: BackpackScreenViewModel = viewModel()) {
+    val caughtDragons by backpackScreenViewModel.caughtDragons.collectAsState()
 
     val totalSlots = 40
 

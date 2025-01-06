@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.catchio.dragon.Dragon
 
 @Composable
 fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsViewModel = viewModel()) {
@@ -66,11 +67,18 @@ fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsVi
             Text(townDetails, color = textColor)
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (selectedTown?.dragon != null) {
-                DisplayImage(imageResId = selectedTown!!.dragon!!.imageResId)
+            if (selectedTown?.dragonName != null) {
+                val dragon = selectedTown?.dragonName?.let { dragonName ->
+                    val levelRange = selectedTown?.levelRange ?: 1..1
+                    Dragon.create(dragonName, levelRange.first, levelRange.last)
+                }
+                if (dragon != null) {
+                    DisplayImage(imageResId = dragon.imageResId)
+                }
             } else if (selectedTown?.imageResId != null) {
                 DisplayImage(imageResId = selectedTown!!.imageResId!!)
             }
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -79,7 +87,7 @@ fun TownDetailsScreen(row: Int, column: Int, townDetailsViewModel: TownDetailsVi
 
             Button(onClick = {
                 if (currentTownList.isNotEmpty()) {
-                    selectedTown = currentTownList.random() as? Town.TownData
+                    selectedTown = currentTownList.random()
                     townDetailsViewModel.updateTownDetails(selectedTown, row, column)
                 }
             }) {
