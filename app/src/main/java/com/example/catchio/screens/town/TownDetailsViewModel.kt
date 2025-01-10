@@ -1,4 +1,4 @@
-package com.example.catchio.screens
+package com.example.catchio.screens.town
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

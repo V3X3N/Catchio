@@ -37,20 +37,20 @@ fun NavigationDrawerContent(
                 modifier = Modifier.padding(vertical = 8.dp)
             )
             NavigationDrawerItem(
-                label = { Text("Screen 1") },
-                selected = currentDestination?.route == Screen.Screen1.route,
+                label = { Text("Route") },
+                selected = currentDestination?.route == Screen.Route.route,
                 onClick = {
                     scope.launch { drawerState.close() }
-                    navController.navigateSingleTopTo(Screen.Screen1.route)
+                    navController.navigateSingleTopTo(Screen.Route.route)
                 },
                 modifier = Modifier.padding(vertical = 8.dp)
             )
             NavigationDrawerItem(
-                label = { Text("Screen 2") },
-                selected = currentDestination?.route == Screen.Screen2.route,
+                label = { Text("Backpack") },
+                selected = currentDestination?.route == Screen.Backpack.route,
                 onClick = {
                     scope.launch { drawerState.close() }
-                    navController.navigateSingleTopTo(Screen.Screen2.route)
+                    navController.navigateSingleTopTo(Screen.Backpack.route)
                 },
                 modifier = Modifier.padding(vertical = 8.dp)
             )

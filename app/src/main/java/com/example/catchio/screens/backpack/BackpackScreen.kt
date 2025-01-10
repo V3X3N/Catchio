@@ -1,4 +1,4 @@
-package com.example.catchio.screens
+package com.example.catchio.screens.backpack
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.catchio.dragon.Dragon
 import com.example.catchio.dragon.DragonDetailsDialog
+import com.example.catchio.screens.town.DisplayImage
 
 @Composable
 fun BackpackScreen(backpackScreenViewModel: BackpackScreenViewModel = viewModel()) {

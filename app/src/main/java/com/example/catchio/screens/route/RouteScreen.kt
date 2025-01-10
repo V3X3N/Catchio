@@ -1,4 +1,4 @@
-package com.example.catchio.screens
+package com.example.catchio.screens.route
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,8 +22,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 
 @Composable
-fun Screen1(navController: NavHostController, screen1ViewModel: Screen1ViewModel = viewModel()) {
-    val rowsCount by screen1ViewModel.rowsCount.collectAsState()
+fun Screen1(navController: NavHostController, routeScreenViewModel: RouteScreenViewModel = viewModel()) {
+    val rowsCount by routeScreenViewModel.rowsCount.collectAsState()
     Box(
         modifier = Modifier
             .fillMaxSize()

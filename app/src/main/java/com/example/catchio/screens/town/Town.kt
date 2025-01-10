@@ -1,4 +1,4 @@
-package com.example.catchio.screens
+package com.example.catchio.screens.town
 
 data class Town(
     val townData: TownData

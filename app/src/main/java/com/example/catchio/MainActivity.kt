@@ -17,9 +17,9 @@ import androidx.navigation.navArgument
 import com.example.catchio.navigation.NavigationDrawerContent
 import com.example.catchio.navigation.Screen
 import com.example.catchio.screens.MainScreen
-import com.example.catchio.screens.Screen1
-import com.example.catchio.screens.BackpackScreen
-import com.example.catchio.screens.TownDetailsScreen
+import com.example.catchio.screens.route.Screen1
+import com.example.catchio.screens.backpack.BackpackScreen
+import com.example.catchio.screens.town.TownDetailsScreen
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -64,8 +64,8 @@ class MainActivity : ComponentActivity() {
                         Modifier.padding(padding)
                     ) {
                         composable(Screen.Main.route) { MainScreen() }
-                        composable(Screen.Screen1.route) { Screen1(navController) }
-                        composable(Screen.Screen2.route) { BackpackScreen() }
+                        composable(Screen.Route.route) { Screen1(navController) }
+                        composable(Screen.Backpack.route) { BackpackScreen() }
                         composable(
                             "townDetails/{row}/{column}",
                             arguments = listOf(
