@@ -1,14 +1,15 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.example.catchio"
+    namespace = "com.vcoffee.catchio"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.catchio"
+        applicationId = "com.vcoffee.catchio"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -61,6 +62,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.appcompat)
+    implementation(libs.firebase.common.ktx)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.database.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -70,4 +74,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.gson)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 }
