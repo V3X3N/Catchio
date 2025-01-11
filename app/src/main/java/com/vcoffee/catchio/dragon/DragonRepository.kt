@@ -6,7 +6,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
-class DragonRepository(val db: FirebaseFirestore) {
+class DragonRepository(db: FirebaseFirestore) {
 
     private val dragonCollection = db.collection("dragons")
     private val stableCollection = db.collection("dragonStable")

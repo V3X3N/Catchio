@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class TownDetailsViewModel(application: Application) : AndroidViewModel(application) {
+
     private val firebaseFirestore = FirebaseFirestore.getInstance()
     private val dragonRepository = DragonRepository(firebaseFirestore)
 
@@ -182,7 +183,11 @@ class TownDetailsViewModel(application: Application) : AndroidViewModel(applicat
             HS_Atk = hiddenStats.hiddenATK,
             HS_Def = hiddenStats.hiddenDEF,
             HS_Spd = hiddenStats.hiddenSPD,
-            MoveSet = listOf(attacks)
+            MoveSet = listOf(attacks),
+            baseHP = Dragon.dragonData[name]!!.baseHP,
+            baseATK = Dragon.dragonData[name]!!.baseATK,
+            baseDEF = Dragon.dragonData[name]!!.baseDEF,
+            baseSPD = Dragon.dragonData[name]!!.baseSPD
         )
     }
 }
