@@ -25,8 +25,17 @@ import com.google.firebase.auth.FirebaseUser
 fun LoginScreen(onLoginSuccess: (FirebaseUser?) -> Unit) {
     val viewModel: LoginViewModel = viewModel()
     var isModalOpen by remember { mutableStateOf(true) }
+    val isLoggedIn = viewModel.isLoggedIn()
 
     LaunchedEffect(key1 = Unit) {
+        if (isLoggedIn) {
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser != null) {
+                onLoginSuccess(currentUser)
+            } else {
+                viewModel.setLoggedIn(false)
+            }
+        }
         viewModel.loginSuccess.collect {
             val currentUser = FirebaseAuth.getInstance().currentUser
             if (currentUser != null) {
@@ -35,7 +44,20 @@ fun LoginScreen(onLoginSuccess: (FirebaseUser?) -> Unit) {
         }
     }
 
-    if (isModalOpen) {
+    if (isLoggedIn) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Jesteś zalogowany!")
+            Button(onClick = { viewModel.logout() }) {
+                Text("Wyloguj")
+            }
+        }
+    } else if (isModalOpen){
         LoginModal(
             viewModel = viewModel,
             onClose = {
@@ -52,7 +74,7 @@ fun LoginScreen(onLoginSuccess: (FirebaseUser?) -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(onClick = { isModalOpen = true }) {
-                Text("Open Modal")
+                Text("Otwórz Modal")
             }
         }
     }

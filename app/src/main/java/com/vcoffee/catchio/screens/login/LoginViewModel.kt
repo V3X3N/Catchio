@@ -1,10 +1,12 @@
 package com.vcoffee.catchio.screens.login
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -16,12 +18,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.atomic.AtomicInteger
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private val auth = FirebaseAuth.getInstance()
     private val db = Firebase.firestore
     private val usersCollection = db.collection("users")
     private val usernameCounter = AtomicInteger(0)
+
+    private val sharedPref = getApplication<Application>().getSharedPreferences("my_app_prefs", Context.MODE_PRIVATE)
 
     private val _loginSuccess = MutableSharedFlow<Unit>()
     val loginSuccess: SharedFlow<Unit> = _loginSuccess.asSharedFlow()
@@ -42,6 +46,14 @@ class LoginViewModel : ViewModel() {
         private set
 
     var errorMessage by mutableStateOf<String?>(null)
+
+    fun isLoggedIn(): Boolean {
+        return sharedPref.getBoolean("isLoggedIn", false)
+    }
+
+    fun setLoggedIn(isLoggedIn: Boolean) {
+        sharedPref.edit().putBoolean("isLoggedIn", isLoggedIn).apply()
+    }
 
     fun onTabChange(tab: String) {
         activeTab = tab
@@ -70,9 +82,10 @@ class LoginViewModel : ViewModel() {
                 Log.d("LoginViewModel", "Attempting login with email: $email")
                 auth.signInWithEmailAndPassword(email, password).await()
                 _loginSuccess.emit(Unit)
+                setLoggedIn(true)
             } catch (e: Exception) {
-                Log.e("LoginViewModel", "Login failed: ${e.localizedMessage}", e)
-                errorMessage = e.localizedMessage
+                Log.e("LoginViewModel", "Login failed: ${e.message}", e)
+                errorMessage = e.message
             }
         }
     }
@@ -82,7 +95,7 @@ class LoginViewModel : ViewModel() {
             val count = usersCollection.get().await().size()
             usernameCounter.set(count)
         } catch (e: Exception) {
-            Log.e("LoginViewModel", "Failed to initialize username counter: ${e.localizedMessage}", e)
+            Log.e("LoginViewModel", "Failed to initialize username counter: ${e.message}", e)
             usernameCounter.set(0)
         }
     }
@@ -117,14 +130,15 @@ class LoginViewModel : ViewModel() {
                     Log.d("LoginViewModel", "Automatically logging in after registration")
                     auth.signInWithEmailAndPassword(registerEmail, registerPassword).await()
                     _loginSuccess.emit(Unit)
+                    setLoggedIn(true)
                 } catch (loginException: Exception) {
-                    Log.e("LoginViewModel", "Automatic login failed: ${loginException.localizedMessage}", loginException)
-                    errorMessage = "Registration successful, but automatic login failed: ${loginException.localizedMessage}"
+                    Log.e("LoginViewModel", "Automatic login failed: ${loginException.message}", loginException)
+                    errorMessage = "Registration successful, but automatic login failed: ${loginException.message}"
                 }
 
             } catch (e: Exception) {
-                Log.e("LoginViewModel", "Registration failed: ${e.localizedMessage}", e)
-                errorMessage = e.localizedMessage
+                Log.e("LoginViewModel", "Registration failed: ${e.message}", e)
+                errorMessage = e.message
             }
         }
     }
@@ -134,6 +148,11 @@ class LoginViewModel : ViewModel() {
         password = ""
         registerEmail = ""
         registerPassword = ""
+    }
+
+    fun logout() {
+        auth.signOut()
+        setLoggedIn(false)
     }
 
     private fun validatePassword(password: String): String? {
