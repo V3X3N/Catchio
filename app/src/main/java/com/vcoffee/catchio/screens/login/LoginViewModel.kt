@@ -6,17 +6,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.concurrent.atomic.AtomicInteger
 
 class LoginViewModel : ViewModel() {
+
     private val auth = FirebaseAuth.getInstance()
-    private val database = FirebaseDatabase.getInstance().reference
+    private val db = Firebase.firestore
+    private val usersCollection = db.collection("users")
+    private val usernameCounter = AtomicInteger(0)
 
     private val _loginSuccess = MutableSharedFlow<Unit>()
     val loginSuccess: SharedFlow<Unit> = _loginSuccess.asSharedFlow()
@@ -72,6 +77,16 @@ class LoginViewModel : ViewModel() {
         }
     }
 
+    private suspend fun initializeUsernameCounter() {
+        try {
+            val count = usersCollection.get().await().size()
+            usernameCounter.set(count)
+        } catch (e: Exception) {
+            Log.e("LoginViewModel", "Failed to initialize username counter: ${e.localizedMessage}", e)
+            usernameCounter.set(0)
+        }
+    }
+
     fun onRegisterClicked() {
         val validationError = validatePassword(registerPassword)
         if (validationError != null) {
@@ -85,11 +100,16 @@ class LoginViewModel : ViewModel() {
                 val result = auth.createUserWithEmailAndPassword(registerEmail, registerPassword).await()
                 val userId = result.user?.uid ?: throw Exception("User ID is null")
 
-                val userMap = mapOf(
+                val username = "Player${1000 + usernameCounter.incrementAndGet()}"
+
+                val userMap = hashMapOf(
+                    "userId" to userId,
+                    "username" to username,
                     "email" to registerEmail,
-                    "createdAt" to System.currentTimeMillis()
+                    "createdAt" to com.google.firebase.Timestamp.now()
                 )
-                database.child("users").child(userId).setValue(userMap).await()
+
+                usersCollection.document(userId).set(userMap).await()
 
                 Log.d("LoginViewModel", "Registration successful for userId: $userId")
 
@@ -126,5 +146,11 @@ class LoginViewModel : ViewModel() {
             return "Password must contain at least one non-alphanumeric character"
         }
         return null
+    }
+
+    init {
+        viewModelScope.launch {
+            initializeUsernameCounter()
+        }
     }
 }
