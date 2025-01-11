@@ -1,5 +1,6 @@
 package com.vcoffee.catchio.dragon
 
+import com.google.firebase.firestore.DocumentReference
 import com.vcoffee.catchio.R
 import kotlin.random.Random
 
@@ -73,3 +74,19 @@ data class Dragon(
         )
     }
 }
+
+data class FireStoreDragon(
+    val name: String = "",
+    val lvl: Int = 0,
+    val type: String = "",
+    val HS_HP: Int = 0,
+    val HS_Atk: Int = 0,
+    val HS_Def: Int = 0,
+    val HS_Spd: Int = 0,
+    val MoveSet: List<String> = emptyList()
+)
+
+data class DragonStable(
+    val userRef: DocumentReference? = null,
+    val dragons: List<DocumentReference> = emptyList()
+)

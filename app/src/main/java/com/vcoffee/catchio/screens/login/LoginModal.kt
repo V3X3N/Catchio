@@ -2,7 +2,6 @@ package com.vcoffee.catchio.screens.login
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,8 +27,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LoginModal(
     viewModel: LoginViewModel,
-    onClose: () -> Unit,
-    onLoginSuccess: () -> Unit
+    onClose: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -49,12 +47,10 @@ fun LoginModal(
             ) {
                 TabButton(
                     title = "Login",
-                    isActive = viewModel.activeTab == "login",
                     onClick = { viewModel.onTabChange("login") }
                 )
                 TabButton(
                     title = "Register",
-                    isActive = viewModel.activeTab == "register",
                     onClick = { viewModel.onTabChange("register") }
                 )
             }
@@ -77,7 +73,7 @@ fun LoginModal(
 }
 
 @Composable
-fun TabButton(title: String, isActive: Boolean, onClick: () -> Unit) {
+fun TabButton(title: String, onClick: () -> Unit) {
     TextButton(
         onClick = onClick,
         colors = ButtonDefaults.textButtonColors(
