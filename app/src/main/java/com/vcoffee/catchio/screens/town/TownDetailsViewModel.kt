@@ -156,7 +156,20 @@ class TownDetailsViewModel(application: Application) : AndroidViewModel(applicat
                             }
 
                             if (stable != null && stableId != null) {
-                                dragonRepository.updateDragonStable(stableId, dragonRef)
+                                val addedToBattle = dragonRepository.addDragonToBattle(stableId, dragonRef)
+                                if (addedToBattle) {
+                                    Log.i("TownDetailsViewModel", "Smok został dodany do battleDragons")
+                                } else {
+                                    dragonRepository.updateDragonStable(stableId, dragonRef)
+                                    Log.i("TownDetailsViewModel", "Smok został dodany do dragons")
+                                }
+
+                                val battleDragonsSize = dragonRepository.getBattleDragonsSize(stableId)
+                                val dragonsSize = dragonRepository.getDragonsSize(stableId)
+
+                                Log.i("TownDetailsViewModel", "Rozmiar battleDragons: $battleDragonsSize")
+                                Log.i("TownDetailsViewModel", "Rozmiar dragons: $dragonsSize")
+
                                 _generatedDragon.value = null
                             } else {
                                 Log.e("TownDetailsViewModel", "Nie udało się pobrać/utworzyć stajni")

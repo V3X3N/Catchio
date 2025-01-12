@@ -96,5 +96,6 @@ data class FireStoreDragon(
 
 data class DragonStable(
     val userRef: DocumentReference? = null,
-    val dragons: List<DocumentReference> = emptyList()
+    val dragons: List<DocumentReference> = emptyList(),
+    val battleDragons: List<DocumentReference> = emptyList()
 )

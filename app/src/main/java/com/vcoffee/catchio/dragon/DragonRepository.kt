@@ -73,4 +73,47 @@ class DragonRepository(db: FirebaseFirestore) {
             emptyList()
         }
     }
+
+    suspend fun addDragonToBattle(stableId: String, dragonRef: DocumentReference): Boolean {
+        return try {
+            val stableRef = stableCollection.document(stableId)
+            val stableSnapshot = stableRef.get().await()
+            val currentBattleDragons = stableSnapshot["battleDragons"] as? List<DocumentReference> ?: emptyList()
+
+            if (currentBattleDragons.size < 4) {
+                stableRef.update("battleDragons", FieldValue.arrayUnion(dragonRef)).await()
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            Log.e("DragonRepository", "Błąd dodawania smoka do battleDragons: ${e.message}")
+            false
+        }
+    }
+
+    suspend fun getBattleDragonsSize(stableId: String): Int {
+        return try {
+            val stableRef = stableCollection.document(stableId)
+            val stableSnapshot = stableRef.get().await()
+            val battleDragons = stableSnapshot["battleDragons"] as? List<DocumentReference> ?: emptyList()
+            battleDragons.size
+        } catch (e: Exception) {
+            Log.e("DragonRepository", "Błąd pobierania rozmiaru battleDragons: ${e.message}")
+            0
+        }
+    }
+
+    suspend fun getDragonsSize(stableId: String): Int {
+        return try {
+            val stableRef = stableCollection.document(stableId)
+            val stableSnapshot = stableRef.get().await()
+            val dragons = stableSnapshot["dragons"] as? List<DocumentReference> ?: emptyList()
+            dragons.size
+        } catch (e: Exception) {
+            Log.e("DragonRepository", "Błąd pobierania rozmiaru dragons: ${e.message}")
+            0
+        }
+    }
+
 }
