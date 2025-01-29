@@ -45,9 +45,9 @@ fun BackpackScreen(backpackScreenViewModel: BackpackScreenViewModel = viewModel(
     var selectedDragon by remember { mutableStateOf<Dragon?>(null) }
 
     LaunchedEffect(caughtDragons, battleDragons) {
-        println("Aktualne smoki w plecaku: ${caughtDragons.size}")
-        println("Aktualne battle smoki: ${battleDragons.size}")
-        println("Nazwy battle smoków: ${battleDragons.map { it.name }}")
+        println("Current backpack dragons: ${caughtDragons.size}")
+        println("Current battle dragons: ${battleDragons.size}")
+        println("Battle dragon names: ${battleDragons.map { it.name }}")
     }
 
     if (selectedDragon != null) {

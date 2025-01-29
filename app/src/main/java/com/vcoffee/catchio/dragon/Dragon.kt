@@ -44,10 +44,10 @@ data class Dragon(
                 hiddenSPD = Random.nextInt(1, 26)
             )
 
-            val finalHP = (0.1f * (1.8f * stats.baseHP + (0.33f * hiddenStats.hiddenHP)) * level).toInt()
-            val finalATK = (0.1f * (1.8f * stats.baseATK + (0.33f * hiddenStats.hiddenATK)) * level).toInt()
-            val finalDEF = (0.1f * (1.8f * stats.baseDEF + (0.33f * hiddenStats.hiddenDEF)) * level).toInt()
-            val finalSPD = (0.1f * (1.8f * stats.baseSPD + (0.33f * hiddenStats.hiddenSPD)) * level).toInt()
+            val finalHP = DragonUtils.calculateStats(stats.baseHP, hiddenStats.hiddenHP, level)
+            val finalATK = DragonUtils.calculateStats(stats.baseATK, hiddenStats.hiddenATK, level)
+            val finalDEF = DragonUtils.calculateStats(stats.baseDEF, hiddenStats.hiddenDEF, level)
+            val finalSPD = DragonUtils.calculateStats(stats.baseSPD, hiddenStats.hiddenSPD, level)
 
             return Dragon(
                 name = name,
@@ -76,6 +76,12 @@ data class Dragon(
             val baseDEFBonus: Int,
             val baseSPDBonus: Int
         )
+    }
+}
+
+object DragonUtils {
+    fun calculateStats(baseStat: Int, hiddenStat: Int, level: Int): Int {
+        return ((0.1f * (1.8f * baseStat + (0.33f * hiddenStat)) * level)+8).toInt()
     }
 }
 

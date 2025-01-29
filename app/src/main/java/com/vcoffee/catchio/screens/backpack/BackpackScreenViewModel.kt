@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.vcoffee.catchio.R
 import com.vcoffee.catchio.dragon.Dragon
 import com.vcoffee.catchio.dragon.DragonRepository
+import com.vcoffee.catchio.dragon.DragonUtils
 import com.vcoffee.catchio.dragon.FireStoreDragon
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,7 +30,7 @@ class BackpackScreenViewModel(application: Application) : AndroidViewModel(appli
             Firebase.auth.currentUser?.let { user ->
                 loadDragons(user.uid)
             } ?: run {
-                Log.e("BackpackVM", "Brak zalogowanego użytkownika")
+                Log.e("BackpackVM", "No logged in user")
                 _caughtDragons.value = emptyList()
                 _battleDragons.value = emptyList()
             }
@@ -40,19 +41,12 @@ class BackpackScreenViewModel(application: Application) : AndroidViewModel(appli
         try {
             val stable = dragonRepository.getDragonStable(userId)
             if (stable == null) {
-                Log.e("BackpackVM", "Brak stajni dla użytkownika")
+                Log.e("BackpackVM", "No stable for user")
                 return
             }
 
-            Log.d("BackpackVM", """
-                |Dane ze stajni:
-                |Zwykłe smoki: ${stable.dragons.size}
-                |Battle smoki: ${stable.battleDragons.size}
-            """.trimMargin())
-
             _caughtDragons.value = if (stable.dragons.isNotEmpty()) {
                 val dragons = dragonRepository.getDragonsFromStable(stable.dragons)
-                Log.d("BackpackVM", "Załadowano ${dragons.size} zwykłych smoków: ${dragons.map { it.name }}")
                 dragons.map { it.toDragon() }
             } else {
                 emptyList()
@@ -60,14 +54,13 @@ class BackpackScreenViewModel(application: Application) : AndroidViewModel(appli
 
             _battleDragons.value = if (stable.battleDragons.isNotEmpty()) {
                 val battleDragons = dragonRepository.getDragonsFromStable(stable.battleDragons)
-                Log.d("BackpackVM", "Załadowano ${battleDragons.size} battle smoków: ${battleDragons.map { it.name }}")
                 battleDragons.map { it.toDragon() }
             } else {
                 emptyList()
             }
 
         } catch (e: Exception) {
-            Log.e("BackpackVM", "Błąd ładowania smoków: ${e.message}")
+            Log.e("BackpackVM", "Error loading dragons: ${e.message}")
         }
     }
 
@@ -80,14 +73,20 @@ class BackpackScreenViewModel(application: Application) : AndroidViewModel(appli
             "Miurfinn" -> R.drawable.miurfinn
             else -> R.drawable.ic_launcher_background
         }
+
+        val finalHP = DragonUtils.calculateStats(baseHP, HS_HP, lvl)
+        val finalATK = DragonUtils.calculateStats(baseATK, HS_Atk, lvl)
+        val finalDEF = DragonUtils.calculateStats(baseDEF, HS_Def, lvl)
+        val finalSPD = DragonUtils.calculateStats(baseSPD, HS_Spd, lvl)
+
         return Dragon(
             name = name,
             level = lvl,
             type = type,
-            hp = HS_HP,
-            attack = HS_Atk,
-            defense = HS_Def,
-            speed = HS_Spd,
+            hp = finalHP,
+            attack = finalATK,
+            defense = finalDEF,
+            speed = finalSPD,
             attacks = MoveSet.firstOrNull() ?: "",
             imageResId = imageResId,
             hiddenStats = Dragon.HiddenStats(HS_HP, HS_Atk, HS_Def, HS_Spd)
