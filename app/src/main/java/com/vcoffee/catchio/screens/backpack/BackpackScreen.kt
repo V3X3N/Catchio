@@ -4,15 +4,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +35,7 @@ import com.vcoffee.catchio.screens.town.DisplayImage
 @Composable
 fun BackpackScreen(backpackScreenViewModel: BackpackScreenViewModel = viewModel()) {
     val caughtDragons by backpackScreenViewModel.caughtDragons.collectAsState()
+    val battleDragons by backpackScreenViewModel.battleDragons.collectAsState()
 
     val totalSlots = 40
 
@@ -38,37 +44,76 @@ fun BackpackScreen(backpackScreenViewModel: BackpackScreenViewModel = viewModel(
 
     var selectedDragon by remember { mutableStateOf<Dragon?>(null) }
 
-    if (selectedDragon != null) {
-        DragonDetailsDialog(dragon = selectedDragon!!, onDismiss = { selectedDragon = null })
+    LaunchedEffect(caughtDragons, battleDragons) {
+        println("Aktualne smoki w plecaku: ${caughtDragons.size}")
+        println("Aktualne battle smoki: ${battleDragons.size}")
+        println("Nazwy battle smoków: ${battleDragons.map { it.name }}")
     }
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(4),
+    if (selectedDragon != null) {
+        DragonDetailsDialog(
+            dragon = selectedDragon!!,
+            onDismiss = { selectedDragon = null }
+        )
+    }
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(8.dp)
+            .padding(8.dp)
     ) {
-        items(dragonSlots) { dragon ->
-            Box(
-                modifier = Modifier
-                    .aspectRatio(1f)
-                    .background(
-                        color = if (dragon != null) Color.Gray else Color.LightGray,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(4.dp)
-                    .clickable {
-                        if (dragon != null) {
-                            selectedDragon = dragon
-                        }
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                if (dragon != null) {
-                    DisplayImage(imageResId = dragon.imageResId)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            for (i in 0 until 4) {
+                val dragon = if (i < battleDragons.size) battleDragons[i] else null
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
+                        .background(
+                            color = if (dragon != null) Color.Gray else Color.LightGray,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(4.dp)
+                        .clickable {
+                            dragon?.let { selectedDragon = it }
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (dragon != null) {
+                        DisplayImage(imageResId = dragon.imageResId)
+                    } else {
+                        Text(text = "Slot ${i + 1}", color = Color.White)
+                    }
+                }
+            }
+        }
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(dragonSlots) { dragon ->
+                Box(
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .background(
+                            color = if (dragon != null) Color.Gray else Color.LightGray,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(4.dp)
+                        .clickable {
+                            dragon?.let { selectedDragon = it }
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    dragon?.let { DisplayImage(imageResId = it.imageResId) }
                 }
             }
         }

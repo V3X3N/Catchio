@@ -1,6 +1,7 @@
 package com.vcoffee.catchio.screens.backpack
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
@@ -18,27 +19,55 @@ class BackpackScreenViewModel(application: Application) : AndroidViewModel(appli
     private val firebaseFirestore = FirebaseFirestore.getInstance()
     private val dragonRepository = DragonRepository(firebaseFirestore)
     private val _caughtDragons = MutableStateFlow<List<Dragon>>(emptyList())
+    private val _battleDragons = MutableStateFlow<List<Dragon>>(emptyList())
+
     val caughtDragons: StateFlow<List<Dragon>> = _caughtDragons
+    val battleDragons: StateFlow<List<Dragon>> = _battleDragons
 
     init {
         viewModelScope.launch {
-            val currentUser = Firebase.auth.currentUser
-            if (currentUser != null) {
-                val userId = currentUser.uid
-                loadDragons(userId)
-            } else {
+            Firebase.auth.currentUser?.let { user ->
+                loadDragons(user.uid)
+            } ?: run {
+                Log.e("BackpackVM", "Brak zalogowanego użytkownika")
                 _caughtDragons.value = emptyList()
+                _battleDragons.value = emptyList()
             }
         }
     }
 
     private suspend fun loadDragons(userId: String) {
-        val stable = dragonRepository.getDragonStable(userId)
-        if (stable != null && stable.dragons.isNotEmpty()) {
-            val firestoreDragons = dragonRepository.getDragonsFromStable(stable.dragons)
-            _caughtDragons.value = firestoreDragons.map { it.toDragon() }
-        } else {
-            _caughtDragons.value = emptyList()
+        try {
+            val stable = dragonRepository.getDragonStable(userId)
+            if (stable == null) {
+                Log.e("BackpackVM", "Brak stajni dla użytkownika")
+                return
+            }
+
+            Log.d("BackpackVM", """
+                |Dane ze stajni:
+                |Zwykłe smoki: ${stable.dragons.size}
+                |Battle smoki: ${stable.battleDragons.size}
+            """.trimMargin())
+
+            _caughtDragons.value = if (stable.dragons.isNotEmpty()) {
+                val dragons = dragonRepository.getDragonsFromStable(stable.dragons)
+                Log.d("BackpackVM", "Załadowano ${dragons.size} zwykłych smoków: ${dragons.map { it.name }}")
+                dragons.map { it.toDragon() }
+            } else {
+                emptyList()
+            }
+
+            _battleDragons.value = if (stable.battleDragons.isNotEmpty()) {
+                val battleDragons = dragonRepository.getDragonsFromStable(stable.battleDragons)
+                Log.d("BackpackVM", "Załadowano ${battleDragons.size} battle smoków: ${battleDragons.map { it.name }}")
+                battleDragons.map { it.toDragon() }
+            } else {
+                emptyList()
+            }
+
+        } catch (e: Exception) {
+            Log.e("BackpackVM", "Błąd ładowania smoków: ${e.message}")
         }
     }
 

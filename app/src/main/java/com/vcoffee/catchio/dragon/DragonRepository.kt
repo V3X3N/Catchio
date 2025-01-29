@@ -23,21 +23,27 @@ class DragonRepository(db: FirebaseFirestore) {
 
     suspend fun getDragonStable(userId: String): DragonStable? {
         return try {
-            val querySnapshot = stableCollection
+            val query = stableCollection
                 .whereEqualTo("userRef", userCollection.document(userId))
-                .get()
-                .await()
-            if (querySnapshot.documents.isNotEmpty()) {
-                val document = querySnapshot.documents.first()
-                val stable = document.toObject(DragonStable::class.java)
-                stable?.let {
-                    DragonStable(it.userRef, it.dragons)
-                }
-            } else {
-                null
+                .limit(1)
+
+            val snapshot = query.get().await()
+            if (snapshot.isEmpty) {
+                Log.d("DragonRepo", "Brak stajni dla użytkownika $userId")
+                return null
             }
+
+            val document = snapshot.documents[0]
+            DragonStable(
+                userRef = document.getDocumentReference("userRef")!!,
+                dragons = document.get("dragons") as? List<DocumentReference> ?: emptyList(),
+                battleDragons = document.get("battleDragons") as? List<DocumentReference> ?: emptyList()
+            ).also {
+                Log.d("DragonRepo", "Pobrano stajnię: $it")
+            }
+
         } catch (e: Exception) {
-            Log.e("DragonRepository", "Błąd pobierania stajni: ${e.message}")
+            Log.e("DragonRepo", "Błąd pobierania stajni: ${e.message}")
             null
         }
     }
@@ -63,13 +69,14 @@ class DragonRepository(db: FirebaseFirestore) {
         }
     }
 
-    suspend fun getDragonsFromStable(dragonRefs: List<DocumentReference>): List<FireStoreDragon> {
+    suspend fun getDragonsFromStable(refs: List<DocumentReference>): List<FireStoreDragon> {
         return try {
-            dragonRefs.mapNotNull { dragonRef ->
-                dragonRef.get().await().toObject(FireStoreDragon::class.java)
+            refs.mapNotNull { ref ->
+                ref.get().await().toObject(FireStoreDragon::class.java)
+                    ?.also { Log.d("DragonRepo", "Pobrano smoka: ${it.name}") }
             }
         } catch (e: Exception) {
-            Log.e("DragonRepository", "Błąd pobierania smoków ze stajni: ${e.message}")
+            Log.e("DragonRepo", "Błąd pobierania smoków: ${e.message}")
             emptyList()
         }
     }
