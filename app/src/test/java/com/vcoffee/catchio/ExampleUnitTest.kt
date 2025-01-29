@@ -1,4 +1,4 @@
-package com.example.catchio
+package com.vcoffee.catchio
 
 import org.junit.Test
 

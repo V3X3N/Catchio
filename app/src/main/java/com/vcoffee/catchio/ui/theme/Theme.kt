@@ -1,6 +1,5 @@
-package com.example.catchio.ui.theme
+package com.vcoffee.catchio.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

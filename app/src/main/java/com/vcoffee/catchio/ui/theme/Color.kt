@@ -1,4 +1,4 @@
-package com.example.catchio.ui.theme
+package com.vcoffee.catchio.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
